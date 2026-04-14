@@ -88,6 +88,49 @@
 </head>
 
 <body>
+  <div id="box" onclick="showMessage()">
+        Click me 💌
+    </div>
+
+    <div id="message">
+        Dear lovelove,<br><br>
+        Happy 1st anniversary po! I'm so happy na inabot kit sini na punto...
+        Thank you for always making me feel loved. I love you so much 💞
+    </div>
+</div>
+
+<script>
+function showMessage() {
+    document.getElementById("message").style.display = "block";
+    createHeartsBurst();
+}
+
+/* 💖 floating hearts generator */
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.innerHTML = "💖";
+    heart.classList.add("heart-float");
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (10 + Math.random() * 20) + "px";
+    heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 8000);
+}
+
+setInterval(createHeart, 500);
+
+/* 💥 burst hearts when clicked */
+function createHeartsBurst() {
+    for (let i = 0; i < 15; i++) {
+        setTimeout(createHeart, i * 100);
+    }
+}
+</script>
 
   <div class="container">
     <h1>🎉</h1>
