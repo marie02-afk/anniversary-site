@@ -6,19 +6,12 @@
 <title>Anniversary</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
+  margin: 0;
+  font-family: Arial;
   color: white;
-  background: url("bg.jpg") no-repeat center center;
-  background-size: cover;
-  background-attachment: fixed;
-  padding: 20px;
+  background: url("bg.jpg") center/cover fixed;
+  overflow-x: hidden;
 }
 
 /* overlay */
@@ -26,74 +19,70 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.55);
   z-index: 0;
 }
 
 .container {
   position: relative;
   z-index: 2;
+  text-align: center;
+  max-width: 420px;
+  margin: 40px auto;
   background: rgba(0,0,0,0.75);
   padding: 20px;
   border-radius: 15px;
-  max-width: 400px;
-  margin: auto;
-  text-align: center;
 }
 
 /* buttons */
 button {
-  padding: 10px 20px;
+  padding: 10px 15px;
   border: none;
   border-radius: 10px;
   background: #ff4081;
   color: white;
+  margin: 8px;
   cursor: pointer;
-  margin-top: 10px;
-  position: relative;
-  z-index: 3;
 }
 
-/* ENVELOPE */
+/* envelope */
 .envelope {
   width: 250px;
   height: 150px;
+  margin: 25px auto;
   background: #ffcdd2;
-  margin: 30px auto;
   position: relative;
   cursor: pointer;
-  border: 2px solid #e91e63;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  z-index: 2;
+  border-radius: 5px;
 }
 
-/* flap */
+/* flap (stable triangle) */
 .flap {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 0;
   height: 0;
   border-left: 125px solid transparent;
   border-right: 125px solid transparent;
-  border-bottom: 75px solid #e91e63;
-  top: -75px;
+  border-top: 75px solid #e91e63;
   transform-origin: top;
-  transition: 0.6s;
+  transition: 0.5s;
 }
 
-/* open animation */
+/* flap open */
 .envelope.open .flap {
   transform: rotateX(180deg);
 }
 
-/* LETTER */
+/* letter box */
 #message {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 1s ease;
+  display: none;
+  margin-top: 20px;
 }
 
 #message.show {
-  max-height: 600px;
+  display: block;
 }
 
 #letter {
@@ -101,20 +90,24 @@ button {
   color: black;
   padding: 15px;
   border-radius: 10px;
-  margin-top: 10px;
   min-height: 120px;
   white-space: pre-wrap;
 }
 
-/* floating hearts */
-.heart-float {
+/* hearts */
+.heart {
   position: fixed;
-  bottom: -10px;
+  bottom: -20px;
+  font-size: 20px;
   animation: floatUp linear forwards;
   z-index: 1;
 }
 
 @keyframes floatUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
   to {
     transform: translateY(-120vh);
     opacity: 0;
@@ -127,101 +120,70 @@ button {
 
 <div class="container">
 
-  <h1>Happy Anniversary lovey 🎉</h1>
-  <p>Click play first, then open your surprise 💖</p>
+<h2>Happy Anniversary 💖</h2>
 
-  <!-- MUSIC -->
-  <audio id="music" src="song.mp3"></audio>
-  <button onclick="toggleMusic(event)">▶ Play Music</button>
+<audio id="music" src="song.mp3"></audio>
+<button onclick="toggleMusic()">▶ Play Music</button>
 
-  <!-- ENVELOPE -->
-  <div class="envelope" id="envelope" onclick="openEnvelope()">
-    <div class="flap"></div>
-  </div>
+<div class="envelope" onclick="openEnvelope()">
+  <div class="flap"></div>
+</div>
 
-  <!-- MESSAGE -->
-  <div id="message">
-    <div id="letter"></div>
-  </div>
+<div id="message">
+  <div id="letter"></div>
+</div>
 
-  <!-- RESET -->
-  <button onclick="resetEnvelope()">Reset</button>
+<button onclick="resetAll()">Reset</button>
 
 </div>
 
 <script>
-let isPlaying = false;
+let musicPlaying = false;
 
-function toggleMusic(e) {
+function toggleMusic() {
   const music = document.getElementById("music");
-  const btn = e.target;
 
-  if (!isPlaying) {
+  if (!musicPlaying) {
     music.play();
-    btn.textContent = "⏸ Pause Music";
+    musicPlaying = true;
   } else {
     music.pause();
-    btn.textContent = "▶ Play Music";
+    musicPlaying = false;
   }
-
-  isPlaying = !isPlaying;
 }
 
-/* OPEN ENVELOPE */
+/* ENVELOPE OPEN */
 function openEnvelope() {
-  document.getElementById("envelope").classList.add("open");
+  document.querySelector(".envelope").classList.add("open");
   document.getElementById("message").classList.add("show");
 
   startTyping();
-  createHeartsBurst();
 }
 
 /* RESET */
-function resetEnvelope() {
-  document.getElementById("envelope").classList.remove("open");
+function resetAll() {
+  document.querySelector(".envelope").classList.remove("open");
   document.getElementById("message").classList.remove("show");
   document.getElementById("letter").innerHTML = "";
 }
 
-/* LETTER TEXT */
+/* TYPEWRITER */
 const text = `Dear lovelove,
 
 Happy 1st anniversary 💖
-I'm so happy na inabot kit sini na punto saat na duha despite all our mishaps...
+I love you so much <33`;
 
-Alala ko pa ito early days nato, ka-awkward ta na duha, wray gud masyado topic tas masteal la kit glances from each other.
-
-Alala ko liwat ito mga naglalakaw la kit tapos nagiinistorya la kit biskan nano, danay chismis ko, danay imo mga uyag, 
-danay ato, danay at future, tas damo-damo la. Tas kadamo gud fr saat away, diko na maihap. 
-Tikang sito mga selos-selos tas ito disagreements nato pero maupay nga nagccommunicate regardless saat difference.
-
-Tapos igeend nato at away sa mahigpit na hug tas intimate na kiss. 
-Mali la kit parehas sa mga romantic novels hehe. Tapos wra ta naman la namalayan na adi na kit. 
-All things just went on its on.
-
-Love, thank you for always making me feel loved. 
-Thank you for always caring for me. Thank you for the time and effort na gingugol mo saakon. 
-Thank 	you for ALL THE PATIENCE na ginlaan mo saak despite saak pagiging madumoton.. 
-
-Thank you so much Lordy sa lahat. 
-
-Neither this letter nor anything could ever describe how grateful I am to you and how much love I have for you...
-
-I love you so so much po 💞 and I am hopeful na what we share would last a lifetime...
-
-Happy Anniversary <33;
-
-let index = 0;
+let i = 0;
 
 function startTyping() {
-  const letter = document.getElementById("letter");
-  letter.innerHTML = "";
-  index = 0;
+  const el = document.getElementById("letter");
+  el.innerHTML = "";
+  i = 0;
 
   function type() {
-    if (index < text.length) {
-      letter.innerHTML += text[index] === "\n" ? "<br>" : text[index];
-      index++;
+    if (i < text.length) {
+      el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+      i++;
       setTimeout(type, 25);
     }
   }
@@ -232,8 +194,8 @@ function startTyping() {
 /* HEARTS */
 function createHeart() {
   const heart = document.createElement("div");
+  heart.classList.add("heart");
   heart.innerHTML = "💖";
-  heart.classList.add("heart-float");
 
   heart.style.left = Math.random() * 100 + "vw";
   heart.style.fontSize = (10 + Math.random() * 20) + "px";
@@ -245,12 +207,6 @@ function createHeart() {
 }
 
 setInterval(createHeart, 400);
-
-function createHeartsBurst() {
-  for (let i = 0; i < 15; i++) {
-    setTimeout(createHeart, i * 80);
-  }
-}
 </script>
 
 </body>
