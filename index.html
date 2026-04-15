@@ -102,14 +102,30 @@ button {
 
 /* MESSAGE */
 #message {
-  display: none;
-  margin-top: 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease;
+}
+
+#message.show {
+  max-height: 300px;
+}
+
+#letter {
   background: white;
   color: black;
   padding: 15px;
   border-radius: 10px;
-  max-height: 200px;
-  overflow-y: auto;
+  margin-top: 10px;
+
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 1s ease;
+}
+
+#message.show #letter {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .show {
@@ -149,22 +165,9 @@ button {
 
   <!-- MESSAGE -->
   <div id="message">
-    <h3>💌 For You</h3>
-    Dear lovelove,<br><br>
-    Happy 1st anniversary po! I'm so happy na inabot kit sini na punto saat na duha despite all our mishaps...<br><br>
-	Alala ko pa ito early days nato, ka-awkward ta na duha, wray gud masyado topic tas masteal la kit glances from each other. 
-	Alala ko liwat ito mga naglalakaw la kit tapos nagiinistorya la kit biskan nano, danay chismis ko, danay imo mga uyag, danay ato, danay at future, tas damo-damo la. 
-	Tas kadamo gud fr saat away, diko na maihap. Tikang sito mga selos-selos tas ito disagreements nato pero maupay nga nagccommunicate regardless saat difference. 
-	Tapos igeend nato at away sa mahigpit na hug tas intimate na kiss. 
-	Mali la kit parehas sa mga romantic novels hehe. Tapos wra ta naman la namalayan na adi na kit. 
-	All things just went on its on.<br><br>
-	Love, thank you for always making me feel loved. Thank you for always caring for me. Thank you for the time and effort na gingugol mo saakon. 
-	Thank 	you for ALL THE PATIENCE na ginlaan mo saak despite saak pagiging madumoton.. 
-	Thank you so much Lordy sa lahat. 
-	Neither this letter nor anything	could ever describe how grateful I am to you and how much love I have for you... <br><br>
-    I love you so so much po 💞 and I am hopeful na what we share would last a lifetime... Happy Anniversary <33
+	  <div id="lettter"></div>
   </div>
-
+	
   <!-- RESET -->
   <button onclick="resetEnvelope()">Reset</button>
 </div>
@@ -190,9 +193,55 @@ function toggleMusic() {
 function openEnvelope() {
   document.getElementById("envelope").classList.add("open");
   document.getElementById("message").classList.add("show");
-  createHeartsBurst();
+  	createHeartsBurst();
+
+	typeLetter(); // 👈 start typing
 }
 
+const text = `Dear lovelove,
+
+Happy 1st anniversary po! I'm so happy na inabot kit sini na punto saat na duha despite all our mishaps...
+
+Alala ko pa ito early days nato, ka-awkward ta na duha, wray gud masyado topic tas masteal la kit glances from each other.
+
+Alala ko liwat ito mga naglalakaw la kit tapos nagiinistorya la kit biskan nano, danay chismis ko, danay imo mga uyag, 
+danay ato, danay at future, tas damo-damo la. Tas kadamo gud fr saat away, diko na maihap. 
+Tikang sito mga selos-selos tas ito disagreements nato pero maupay nga nagccommunicate regardless saat difference.
+
+Tapos igeend nato at away sa mahigpit na hug tas intimate na kiss. 
+Mali la kit parehas sa mga romantic novels hehe. Tapos wra ta naman la namalayan na adi na kit. 
+All things just went on its on.
+
+Love, thank you for always making me feel loved. 
+Thank you for always caring for me. Thank you for the time and effort na gingugol mo saakon. 
+Thank 	you for ALL THE PATIENCE na ginlaan mo saak despite saak pagiging madumoton.. 
+
+Thank you so much Lordy sa lahat. 
+
+Neither this letter nor anything could ever describe how grateful I am to you and how much love I have for you...
+
+I love you so so much po 💞 and I am hopeful na what we share would last a lifetime...
+
+Happy Anniversary <33`;
+
+let index = 0;
+
+function typeLetter() {
+  const letter = document.getElementById("letter");
+  letter.innerHTML = ""; // reset
+  index = 0;
+
+  function type() {
+    if (index < text.length) {
+      letter.innerHTML += text.charAt(index) === "\n" ? "<br>" : text.charAt(index);
+      index++;
+      setTimeout(type, 30); // speed (lower = faster)
+    }
+  }
+
+  type();
+}
+	
 function resetEnvelope() {
   document.getElementById("envelope").classList.remove("open");
   document.getElementById("message").classList.remove("show");
