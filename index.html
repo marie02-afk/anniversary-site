@@ -209,11 +209,26 @@ function startTyping() {
   el.innerHTML = "";
   i = 0;
 
+  function getDelay(char) {
+    let delay = 60 + Math.random() * 40;
+
+    if (char === ".") delay += 250;
+    if (char === ",") delay += 120;
+    if (char === "!") delay += 250;
+    if (char === "?") delay += 250;
+    if (char === "\n") delay += 300;
+
+    if (Math.random() < 0.04) delay += 350;
+
+    return delay;
+  }
+
   function type() {
     if (i < text.length) {
-      el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+      const char = text[i];
+      el.innerHTML += char === "\n" ? "<br>" : char;
       i++;
-      setTimeout(type, 120);
+      setTimeout(type, getDelay(char));
     }
   }
 
