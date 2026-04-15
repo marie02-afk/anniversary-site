@@ -21,21 +21,18 @@ body {
   padding: 20px;
 }
 
-/* dark overlay */
+/* overlay */
 body::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 0;
 }
 
 .container {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   background: rgba(0,0,0,0.75);
   padding: 20px;
   border-radius: 15px;
@@ -44,7 +41,7 @@ body::before {
   text-align: center;
 }
 
-/* BUTTON */
+/* buttons */
 button {
   padding: 10px 20px;
   border: none;
@@ -53,22 +50,24 @@ button {
   color: white;
   cursor: pointer;
   margin-top: 10px;
+  position: relative;
+  z-index: 3;
 }
 
 /* ENVELOPE */
 .envelope {
-	width: 250px;
-	height: 150px;
-	background: #ffcdd2;
-	margin: 30px auto;
-	position: relative;
-	cursor: pointer;
-
-	border: 2px solid #e91e63;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3)
+  width: 250px;
+  height: 150px;
+  background: #ffcdd2;
+  margin: 30px auto;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid #e91e63;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 2;
 }
 
-/* top triangle (flap) */
+/* flap */
 .flap {
   position: absolute;
   width: 0;
@@ -77,30 +76,16 @@ button {
   border-right: 125px solid transparent;
   border-bottom: 75px solid #e91e63;
   top: -75px;
-  transition: 0.5s;
+  transform-origin: top;
+  transition: 0.6s;
 }
 
-.open .flap {
-  transform: rotateX(360deg);
+/* open animation */
+.envelope.open .flap {
+  transform: rotateX(180deg);
 }
 
-.flap {
-	transform-origin: top;
-}
-
-/* letter inside */
-. envelope: :after {
-	content: "";
-	position: absolute;
-	width: 90%;
-	height: 80%;
-	background: white;
-	top: 10%;
-	left: 5%;
-	border-radius: 5px;
-}
-
-/* MESSAGE */
+/* LETTER */
 #message {
   max-height: 0;
   overflow: hidden;
@@ -108,7 +93,7 @@ button {
 }
 
 #message.show {
-  max-height: 300px;
+  max-height: 600px;
 }
 
 #letter {
@@ -117,31 +102,21 @@ button {
   padding: 15px;
   border-radius: 10px;
   margin-top: 10px;
-
-  transform: translateY(50px);
-  opacity: 0;
-  transition: all 1s ease;
-}
-
-#message.show #letter {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.show {
-  display: block;
+  min-height: 120px;
+  white-space: pre-wrap;
 }
 
 /* floating hearts */
 .heart-float {
   position: fixed;
   bottom: -10px;
-  animation: floatUp random forward;
+  animation: floatUp linear forwards;
+  z-index: 1;
 }
 
 @keyframes floatUp {
   to {
-    transform: translateY(-100vh);
+    transform: translateY(-120vh);
     opacity: 0;
   }
 }
@@ -151,12 +126,13 @@ button {
 <body>
 
 <div class="container">
+
   <h1>Happy Anniversary lovey 🎉</h1>
   <p>Click play first, then open your surprise 💖</p>
 
   <!-- MUSIC -->
   <audio id="music" src="song.mp3"></audio>
-  <button onclick="toggleMusic()">▶ Play Music</button>
+  <button onclick="toggleMusic(event)">▶ Play Music</button>
 
   <!-- ENVELOPE -->
   <div class="envelope" id="envelope" onclick="openEnvelope()">
@@ -165,19 +141,20 @@ button {
 
   <!-- MESSAGE -->
   <div id="message">
-	  <div id="lettter"></div>
+    <div id="letter"></div>
   </div>
-	
+
   <!-- RESET -->
   <button onclick="resetEnvelope()">Reset</button>
+
 </div>
 
 <script>
 let isPlaying = false;
 
-function toggleMusic() {
+function toggleMusic(e) {
   const music = document.getElementById("music");
-  const btn = event.target;
+  const btn = e.target;
 
   if (!isPlaying) {
     music.play();
@@ -190,17 +167,27 @@ function toggleMusic() {
   isPlaying = !isPlaying;
 }
 
+/* OPEN ENVELOPE */
 function openEnvelope() {
   document.getElementById("envelope").classList.add("open");
   document.getElementById("message").classList.add("show");
-  	createHeartsBurst();
 
-	typeLetter(); // 👈 start typing
+  startTyping();
+  createHeartsBurst();
 }
 
+/* RESET */
+function resetEnvelope() {
+  document.getElementById("envelope").classList.remove("open");
+  document.getElementById("message").classList.remove("show");
+  document.getElementById("letter").innerHTML = "";
+}
+
+/* LETTER TEXT */
 const text = `Dear lovelove,
 
-Happy 1st anniversary po! I'm so happy na inabot kit sini na punto saat na duha despite all our mishaps...
+Happy 1st anniversary 💖
+I'm so happy na inabot kit sini na punto saat na duha despite all our mishaps...
 
 Alala ko pa ito early days nato, ka-awkward ta na duha, wray gud masyado topic tas masteal la kit glances from each other.
 
@@ -222,32 +209,27 @@ Neither this letter nor anything could ever describe how grateful I am to you an
 
 I love you so so much po 💞 and I am hopeful na what we share would last a lifetime...
 
-Happy Anniversary <33`;
+Happy Anniversary <33;
 
 let index = 0;
 
-function typeLetter() {
+function startTyping() {
   const letter = document.getElementById("letter");
-  letter.innerHTML = ""; // reset
+  letter.innerHTML = "";
   index = 0;
 
   function type() {
     if (index < text.length) {
-      letter.innerHTML += text.charAt(index) === "\n" ? "<br>" : text.charAt(index);
+      letter.innerHTML += text[index] === "\n" ? "<br>" : text[index];
       index++;
-      setTimeout(type, 30); // speed (lower = faster)
+      setTimeout(type, 25);
     }
   }
 
   type();
 }
-	
-function resetEnvelope() {
-  document.getElementById("envelope").classList.remove("open");
-  document.getElementById("message").classList.remove("show");
-}
 
-/* floating hearts */
+/* HEARTS */
 function createHeart() {
   const heart = document.createElement("div");
   heart.innerHTML = "💖";
@@ -255,18 +237,18 @@ function createHeart() {
 
   heart.style.left = Math.random() * 100 + "vw";
   heart.style.fontSize = (10 + Math.random() * 20) + "px";
-  heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+  heart.style.animationDuration = (3 + Math.random() * 3) + "s";
 
   document.body.appendChild(heart);
 
-  setTimeout(() => heart.remove(), 8000);
+  setTimeout(() => heart.remove(), 6000);
 }
 
-setInterval(createHeart, 500);
+setInterval(createHeart, 400);
 
 function createHeartsBurst() {
   for (let i = 0; i < 15; i++) {
-    setTimeout(createHeart, i * 100);
+    setTimeout(createHeart, i * 80);
   }
 }
 </script>
