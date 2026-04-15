@@ -57,27 +57,47 @@ button {
 
 /* ENVELOPE */
 .envelope {
-  width: 250px;
-  height: 150px;
-  background: #f9c5c8;
-  margin: 30px auto;
-  position: relative;
-  cursor: pointer;
+	width: 250px;
+	height: 150px;
+	background: #ffcdd2;
+	margin: 30px auto;
+	position: relative;
+	cursor: pointer;
+
+	border: 2px solid #e91e63;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3)
 }
 
+/* top triangle (flap) */
 .flap {
   position: absolute;
   width: 0;
   height: 0;
   border-left: 125px solid transparent;
   border-right: 125px solid transparent;
-  border-bottom: 75px solid #ff4081;
+  border-bottom: 75px solid #e91e63;
   top: -75px;
   transition: 0.5s;
 }
 
 .open .flap {
   transform: rotateX(180deg);
+}
+
+.flap {
+	transform-origin: top;
+}
+
+/* letter inside */
+. envelope: :after {
+	content: "";
+	position: absolute;
+	width: 90%;
+	height: 80%;
+	background: white;
+	top: 10%;
+	left: 5%;
+	border-radius: 5px;
 }
 
 /* MESSAGE */
@@ -100,7 +120,7 @@ button {
 .heart-float {
   position: fixed;
   bottom: -10px;
-  animation: floatUp linear forwards;
+  animation: floatUp random forwards;
 }
 
 @keyframes floatUp {
